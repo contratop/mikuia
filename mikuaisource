@@ -1,0 +1,95 @@
+//Proyecto By Contratop
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset = "UTF-8" >
+<title>BOOT/FIRMWARE/MIKU</title>
+<meta name ="Miku"
+content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+//aqui van los recursos de donde se obtiene la I.A
+<script src = "centralstation/mymachine/contratop/ia/natalyexperiment.ia" ></script>
+</head>
+<body>
+</body>
+</html>
+<script>
+/Identificar el token de cada usuario de twitter
+var accessToken={
+accessToken:<your_access_token></your>//Response form server-side Authorization
+  };
+  botConfig = {
+    environment: "twitter/development" ,
+    lang: 'es' ,
+    answers:{
+      answerAttributes: [ 'ANSWER_TEXT' ],
+      sideBubbleAttributes: [ 'SIDEBUBBLE_TEXT' ],
+      maxRelatedContents: 3
+//este comando anterior indica cuantos mensajes seguido puede enviar o procesar la I.A
+    },
+  };
+//testeo de alimentos en I.A y como empezar una conversacion comun
+var queryForPolarQuestion = 'baggage' ;
+var queryForMultipleChoiceQuestion = 'special meals' ;
+var queryForSimpleAnswer = 'vegan meals' ;
+APIPromise = InbentaChatbotSDK .apiClient
+(accessToken,botConfig, "<?echo $key?>" );
+APIPromise.then((chatbotAPI)=> {
+    chatbotAPI.startConversation().then( function
+(response){
+// establecer variable de usuario para saber quien le esta hablando (UserID)
+      chatbotAPI.addVariable( 'firmware/miku/username' , 'NewName' , true );
+// Enviar un mensaje comun
+      chatbotAPI.conversation
+(queryForSimpleAnswer).then( function(response){
+        console.log(response.data);
+// guarda los datos de la ultima respuesta para recibir respuestas encadenantes
+var lastAnswer = response.data;
+// si hay muchas preguntas en memoria y se tiene que tomar una decision se eligira usando la logica artificial
+if (response.data.answers) {
+          lastAnswer = response.data.answers
+[response.data.answers.length- 1 ];
+        }
+// console.log(lastAnswer);
+switch (lastAnswer.type) {
+case "multipleChoiceQuestion" :
+            console.log( "multiple choice question received" );
+// funcion para escojer una opcion ramdom
+var options = lastAnswer.options;
+var choosedOption = options[ Math.floor
+( Math.random() * options.length) % options.length];
+            console.log(choosedOption);
+            chatbotAPI.conversation
+(choosedOption.label, choosedOption.value).then
+( function(response){
+              console.log( "'"+choosedOption.label+ "' selected" );
+              console.log(response.data);
+// opiniones de la i.a y emulacion de sentimientos usando la logica artificial
+if
+(response.data.parameters.contents.trackingCode)
+{
+                chatbotAPI.rateContent
+(response.data.parameters.contents.trackingCode.rateCode,
+1 );
+              }
+            });
+break ;
+case "polarQuestion" :
+            console.log( "polar question received" );
+// comando de afirmacion
+var choosedOption = "yes" ;
+            chatbotAPI.conversation(choosedOption, choosedOption).then( function (response){
+              console.log( "'yes' selected" );
+              console.log(response.data);
+            });
+break ;
+case "answer" :
+            console.log( "simple answer received" );
+break ;
+default :
+break ;
+        }
+      });
+    });
+  });
+  Proyecto By Contratop*/
+</script>
